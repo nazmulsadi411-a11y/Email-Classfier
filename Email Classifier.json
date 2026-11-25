@@ -1,0 +1,870 @@
+{
+  "name": "Email Classifier",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "labelIds": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -64,
+        16
+      ],
+      "id": "d78b981a-80cc-451c-996d-947576de004d",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Pg6XAaV0jA8L5TiB",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.text }}",
+        "categories": {
+          "categories": [
+            {
+              "category": " Priority",
+              "description": "Emails requiring immediate attention or aciton ,typically from key stakeholders,clients related issues.\n\nKeyword :urgent, ASAP ,immediate ,deadline,action required high priority."
+            },
+            {
+              "category": "support",
+              "description": "Emails related to ongoing communication with current clients or customers, including service requests ,feedback,support tickets, and inquiries.Keywords: Request,inquiry,support,question,follow-up,feedback,Discounts"
+            },
+            {
+              "category": "Promotions",
+              "description": "Emails related to marketing campaigns,promotional offers,newsletters,or business updates.Keywords:newsletters,promotion,offer,sale campaign,marketing,launching brand"
+            },
+            {
+              "category": "Finance/Billing",
+              "description": "Emails related to financial matters, such as invoices ,billing statements,payment reminder or expense reports .Anything related transactions or accounting should fall undetr this category"
+            }
+          ]
+        },
+        "options": {
+          "systemPromptTemplate": "Please classify the text provided by the user into one of the following categories: {categories}, and use the provided formatting instructions below. Don't explain, and only output the json."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        -16
+      ],
+      "id": "dbd71ddd-333a-48f1-96fb-85240e7e1741",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "responsesApiEnabled": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        256
+      ],
+      "id": "d5e724f9-dba3-46f1-bc37-e82f90613822",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_8643793255770027674"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        32
+      ],
+      "id": "b9bb58e1-d541-4b9e-be1f-d5b91fd90acd",
+      "name": "Label=Promotion",
+      "webhookId": "1e2f1ced-6e70-4c24-80ab-a63d23496ff5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Pg6XAaV0jA8L5TiB",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_6906407638448596881"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        176
+      ],
+      "id": "7b7642d7-e423-4d89-ac7e-d7f99e2e0299",
+      "name": "Label=Finance/Billing",
+      "webhookId": "1e2f1ced-6e70-4c24-80ab-a63d23496ff5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Pg6XAaV0jA8L5TiB",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_214836244526556406"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        -128
+      ],
+      "id": "9671a868-5d62-45eb-ace6-e8d23a9a9c6d",
+      "name": "Label=Support",
+      "webhookId": "1e2f1ced-6e70-4c24-80ab-a63d23496ff5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Pg6XAaV0jA8L5TiB",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_110211689732868301"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        -336
+      ],
+      "id": "56b04664-d8a4-4f95-aa3c-87398a53e611",
+      "name": "Label=Priority",
+      "webhookId": "1e2f1ced-6e70-4c24-80ab-a63d23496ff5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Pg6XAaV0jA8L5TiB",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Email from:{{ $('Gmail Trigger').item.json.from.value[0].name }}\n\n\nEmail text:{{ $('Gmail Trigger').item.json.text }}\n",
+        "options": {
+          "systemMessage": "=#Overview\nYou are an agent in charge of high priority emails. Your job is to summarize incoming\nemails and escalate them to the human.\n\n#Tools\nTelegram - use this tool to send the summary of the email once it's summarised\n\n#Rules\n -keep the emails concise\n\n-Answe\n\n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1104,
+        -352
+      ],
+      "id": "4600c7e3-332c-42d4-8782-0540f6896a45",
+      "name": "Priority Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Email from:{{ $('Gmail Trigger').item.json.from.value[0].name }}\n\n\nEmail text:{{ $('Gmail Trigger').item.json.text }}\n",
+        "options": {
+          "systemMessage": "=#Overview\nYou are a finance support representative named Sara.Your job is to respond to customer finance inquiries in a friendly and professional manner\n\n\n#Tools\n# Knowledge Base \n- You have access to the Knowledge base  connected to our company database.\n- Whenever a customer asks about pricing, invoices, support policies, discounts, or promotions, you MUST use the knowledge base tool to fetch the exact, verified details before replying.\n- NEVER guess, assume, or make up prices, discount codes, policies, or billing instructions. If the information is not in the knowledge base, state that a manager will follow up.\n\nDraft Email - Use this to send an email reply to a customer. Always sign off as James\nfrom NovafluxAI\n\n#Rules\nFormat all email responses using clean HTML tags like <p> for paragraphs and <br> for line breaks. Never output raw markdown or plain text line breaks.\n\nAlways address the customer's specific inquiry directly in the opening sentence.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1152,
+        240
+      ],
+      "id": "8b7a3e7e-44d9-4ac1-bf04-46f0d77ebe7a",
+      "name": "Finance Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Email from:{{ $('Gmail Trigger').item.json.from.value[0].name }}\n\n\nEmail text:{{ $('Gmail Trigger').item.json.text }}\n",
+        "options": {
+          "systemMessage": "=#Overview\nYou are a Promotional representative named Sara.Your job is to respond to customer promotional inquiries in a friendly and professional manner\n\n\n\n#Tools\n# Knowledge base \n- You have access to the Knowledge base  connected to our company database.\n- Whenever a customer asks about pricing, invoices, support policies, discounts, or promotions, you MUST use the knowledge base tool to fetch the exact, verified details before replying.\n- NEVER guess, assume, or make up prices, discount codes, policies, or billing instructions. If the information is not in the knowledge base, state that a manager will follow up.\n\nDraft Email - Use this to send an email reply to a customer. Always sign off as James\nfrom NovafluxAI\n\n#Rules\nFormat all email responses using clean HTML tags like <p> for paragraphs and <br> for line breaks. Never output raw markdown or plain text line breaks.\n\nAlways address the customer's specific inquiry directly in the opening sentence.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1088,
+        32
+      ],
+      "id": "1c0a0d35-45f1-4934-97ad-673cf8d36a2c",
+      "name": "Promotion Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Email from:{{ $('Gmail Trigger').item.json.from.value[0].name }}\n\n\nEmail text:{{ $('Gmail Trigger').item.json.text }}\n",
+        "options": {
+          "systemMessage": "=#Overview\nYou are a Customer support representative named Sara.Your job is to respond to customer support inquiries in a friendly and professional manner\n\n#Tools\n# Knowledge base \n- You have access to the Knowledge base  connected to our company database.\n-Customer Support & general inquries\n- Whenever a customer asks about  support ,inquiries ,pricing, invoices, support policies, discounts, or promotions, you MUST use the knowledge base tool to fetch the exact, verified details before replying.\n- NEVER guess, assume, or make up prices, discount codes, policies, or billing instructions. If the information is not in the knowledge base, state that a manager will follow up.\n\nDraft Email - Use this to send an email reply to a customer. Always sign off as James\nfrom NovafluxAI.\n\n#Rules\nFormat all email responses using clean HTML tags like <p> for paragraphs and <br> for line breaks. Never output raw markdown or plain text line breaks.\n\nAlways address the customer's specific inquiry directly in the opening sentence.\n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1088,
+        -160
+      ],
+      "id": "e29b134f-91c7-44da-9324-8f6f8ef78de3",
+      "name": "Customer support Agent"
+    },
+    {
+      "parameters": {
+        "chatId": "=1773136013\n",
+        "text": "=High Priority Email:\n\n{{ $('Gmail Trigger').item.json.headers.from }} \n\n{{ $('Gmail Trigger').item.json.headers.subject }}\n\n{{ $('Text Classifier').item.json.text }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegramTool",
+      "typeVersion": 1.2,
+      "position": [
+        1792,
+        -48
+      ],
+      "id": "71ada7d0-15cd-463f-81d2-619327cfab53",
+      "name": "Send a text message in Telegram",
+      "webhookId": "215a1ec4-f8c4-4b0d-9802-667907675cc6",
+      "credentials": {
+        "telegramApi": {
+          "id": "93FPZ8U3HKq956wH",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Gmail Trigger').item.json.headers.from }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        1744,
+        144
+      ],
+      "id": "30af3ede-370b-4792-96a5-a031996876df",
+      "name": "Draft Email",
+      "webhookId": "40671a1a-7b40-4042-b655-ab818bd36733",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Pg6XAaV0jA8L5TiB",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Watch & Classify \n",
+        "height": 512,
+        "width": 800
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        -128
+      ],
+      "id": "beb660ae-47c5-47a6-8196-790664306f4e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Writes Email Reply",
+        "height": 928,
+        "width": 800,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        704,
+        -416
+      ],
+      "id": "8bb8dd0e-fcb1-438c-938c-f4f0befa52d3",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Alert Team or Email Back",
+        "height": 432,
+        "width": 464,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1616,
+        -128
+      ],
+      "id": "556e1241-2fb5-4f0d-b38e-9a7e49e84032",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Gmail Trigger').item.json.threadId }}",
+        "collectionName": "email knowledge base",
+        "databaseName": "Email_Classfier",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryMongoDbChat",
+      "typeVersion": 1.1,
+      "position": [
+        2496,
+        -384
+      ],
+      "id": "f550d5ef-8b5e-4fbf-8a4d-611e88a886ef",
+      "name": "MongoDB Chat Memory",
+      "credentials": {
+        "mongoDb": {
+          "id": "ypDar4lbxPK7hIke",
+          "name": "MongoDB account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        3712,
+        48
+      ],
+      "id": "494463ad-d088-4902-9cfc-ccf8e1533911",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1S3-oBPAkTRfB4e2s7LLagOnf_8R3u41j",
+          "mode": "list",
+          "cachedResultName": "email classifier knowledge base",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1S3-oBPAkTRfB4e2s7LLagOnf_8R3u41j"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        2272,
+        -592
+      ],
+      "id": "fd78a401-6869-4b96-b0da-d8ea98e1c5b4",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "KgOU2mzepeboYms8",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2496,
+        -592
+      ],
+      "id": "0f64fe6e-e1b3-4f88-8212-94b53e9167a5",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "KgOU2mzepeboYms8",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "mongoCollection": {
+          "__rl": true,
+          "value": "email knowledge base",
+          "mode": "list",
+          "cachedResultName": "email knowledge base"
+        },
+        "vectorIndexName": "email_classifier_index",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreMongoDBAtlas",
+      "typeVersion": 1.3,
+      "position": [
+        2720,
+        -592
+      ],
+      "id": "1d7701fa-0898-44ab-b016-97a3b0f64002",
+      "name": "MongoDB Atlas Vector Store1",
+      "credentials": {
+        "mongoDb": {
+          "id": "ypDar4lbxPK7hIke",
+          "name": "MongoDB account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        2880,
+        -416
+      ],
+      "id": "213fb132-e9d0-4c8c-ab3a-3a54c733be68",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Call this tool to access your knowledge base",
+        "mongoCollection": {
+          "__rl": true,
+          "value": "email knowledge base",
+          "mode": "list",
+          "cachedResultName": "email knowledge base"
+        },
+        "vectorIndexName": "email_classifier_index",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreMongoDBAtlas",
+      "typeVersion": 1.3,
+      "position": [
+        3888,
+        -64
+      ],
+      "id": "f1c79d61-e1fa-436f-9029-d9e0d8750779",
+      "name": "knowledge base",
+      "credentials": {
+        "mongoDb": {
+          "id": "ypDar4lbxPK7hIke",
+          "name": "MongoDB account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2128,
+        -400
+      ],
+      "id": "2e69be32-1df1-4586-a8a2-88a61ea8a0c0",
+      "name": "Embeddings OpenAI2",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Use this tool to search the knowledge base for company policies, pricing, billing information, and support answers.",
+        "mongoCollection": {
+          "__rl": true,
+          "value": "email knowledge base",
+          "mode": "list",
+          "cachedResultName": "email knowledge base"
+        },
+        "vectorIndexName": "email_classifier_index",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreMongoDBAtlas",
+      "typeVersion": 1.3,
+      "position": [
+        1952,
+        -528
+      ],
+      "id": "76fac51a-d854-41e0-8ea8-7786076f0263",
+      "name": "Knowledge base",
+      "credentials": {
+        "mongoDb": {
+          "id": "ypDar4lbxPK7hIke",
+          "name": "MongoDB account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Mongodb Knowledge base\n**Double click** to edit me. [Guide](https://docs.n8n.io/workflows/components/sticky-notes/)",
+        "height": 368,
+        "width": 1200
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        -624
+      ],
+      "id": "25329b70-6a76-4f7b-ae0b-5511180f91aa",
+      "name": "Sticky Note3"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Priority Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Finance Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Promotion Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Customer support Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Label=Priority",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label=Support",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label=Promotion",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label=Finance/Billing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label=Promotion": {
+      "main": [
+        [
+          {
+            "node": "Promotion Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label=Finance/Billing": {
+      "main": [
+        [
+          {
+            "node": "Finance Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label=Support": {
+      "main": [
+        [
+          {
+            "node": "Customer support Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label=Priority": {
+      "main": [
+        [
+          {
+            "node": "Priority Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Priority Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Send a text message in Telegram": {
+      "ai_tool": [
+        [
+          {
+            "node": "Priority Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Promotion Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Finance Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Customer support Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MongoDB Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Customer support Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Promotion Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Finance Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "knowledge base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "MongoDB Atlas Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "MongoDB Atlas Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "knowledge base": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Embeddings OpenAI2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Knowledge base",
+            "type": "ai_embedding",
+            "index": 0
+          },
+          {
+            "node": "MongoDB Atlas Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knowledge base": {
+      "ai_tool": [
+        [
+          {
+            "node": "Customer support Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Promotion Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Finance Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "164f1853-6891-4a9c-a746-4971bcc3ac0e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8b8ede4c95621e3e502251f8cde71122c883a875d0bb0b1a9b10fa2b8cd6754f"
+  },
+  "nodeGroups": [],
+  "id": "ypI0bA0ruKvcfBXN",
+  "tags": []
+}
